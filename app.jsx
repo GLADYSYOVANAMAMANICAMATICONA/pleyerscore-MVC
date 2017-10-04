@@ -1,5 +1,5 @@
-class Modal {
-  constructor(players_score) {
+class Model {
+  constructor() {
     this.players = [
       {
         name: "Jim Hoskins",
@@ -19,7 +19,6 @@ class Modal {
     ];
 
     this.callback = null;
-    this.inputAddPlayer = null;
   }
 
   subscribe(render) {
@@ -31,17 +30,17 @@ class Modal {
   }
 
   addPlayer(name) {
-    if(this.inputAddPlayer!= null && this.inputAddPlayer.value !=''){
-    this.players.push({
-      name: this.inputAddPlayer.value,
-      score: 0,
-      id: Utils.uuid()
-    });
+    if (this.input != null && this.input.value != ' ') {
+      this.players.push({
+        name: this.input.value,
+        score: 0,
+        id: Utils.uuid()
+      });
 
-    this.notify();
-    inputAddPlayer.value = '';
+      this.notify();
+      input.value = '';
+    }
   }
-}
 
   Aumentar(index) {
     if (this.players[index].score > 0) {
@@ -58,18 +57,24 @@ class Modal {
   }
 
   totalPoints(e, index, x) {
-    this.players[index].score = this.players[index].score + x;
+    return model.players.map((e) => e.score).reduce((e, x) => { return e + x });
     this.notify();
+  }
+
+  nuevoPlayes() {
+    return model.players.length;
   }
 
 }
 
-const PlayerScore = ({ title, model }) => {
-  const Header = (//React.createClass---palabra reservada
+
+
+const Header = (props) => {//React.createClass---palabra reservada
+  return (
     <div className="header">
       <div className="col-md-8">
-        <p>PLAYERS:{modal.players.length}</p>
-        <p>TOTAL POINTS:{modal.players.map(x => x.score).reduce((x,y)=> x+y )} </p>
+        <p>PLAYERS:{model.nuevoPlayes()}</p>
+        <p>TOTAL POINTS:{model.totalPoints()}</p>
       </div>
 
       <div className="col-md-4 stopwatch">
@@ -80,58 +85,73 @@ const PlayerScore = ({ title, model }) => {
       </div>
     </div>
   );
+}
 
 
 
-  const PlayerList = (//React.createClass---palabra reservada
-    <div >
-      {
-        modal.players.map((players, index) => {//players--objeto del array
-          return (
-            <div className="player">
-              <div className="player-name " >
-                <div key={index}> {players.name} </div>
+const PlayerList = React.createClass({
+  render: function () {
+    return (//React.createClass---palabra reservada
+      <div >
+        {
+          model.players.map((item, index) => {//players--objeto del array
+            return (
+              <div className="player">
+                <div className="player-name " >
+                  <div >{item.name} </div>
+                </div>
+                <div className="player-score counter ">
+
+                  <button className="counter-action decrement btn" onClick={() => model.Disminuir(index)} >-</button>
+                  <div >{item.score} </div>
+                  <button className="counter-action increment" onClick={() => { model.Aumentar(index) }}>+</button>
+                </div>
               </div>
-              <div className="player-score counter ">
+            );
+          })
+        }
+      </div>
+    );
+  }
+})
 
-                <button className="counter-action decrement" onclick={e => { modal.totalPoints(e, index, -1) }}>-</button>
-                <div key={index}> {players.score} </div>
-                <button className="counter-action increment" onclick={e => { modal.totalPoints(e, index, 1) }}>+</button>
-              </div>
-            </div>
-          );
-        })
-      }
-    </div>
-  );
+const PlayerForm = React.createClass({
+  render: function () {
+    return (
+      <div>
+        <form className="form" onSubmit={e => {
+          e.preventDefault();
+          model.addPlayer(model.inputAddPlayer);
+        }}
+        >
+          <input onChange={e => (model.input = e.target)} type="text" placeholder="NOMBRE" />
+          <input type="submit" value="Player" />
+        </form>
+      </div>
+    )
+  }
+})
 
-  const PlayerForm = (//React.createClass---palabra reservada
-    <div>
-      <form className="form" onSubmit={e => {
-        e.preventDefault();
-        modal.addPlayer(modal.inputAddPlayer);
-      }}
-      >
-        <input onChange={e => (modal.inputAddPlayer = e.target)} type="text" placeholder="NOMBRE" />
-        <input type="submit" value="Player" />
-      </form>
-    </div>
-  );
+
+const Application = ({ title, model }) => {
   return (
     <div>
       <div className="scoreboard">
-        {Header}
-        {PlayerList}
-        {PlayerForm}
+        <Header/>
+        <PlayerList/>
+        <PlayerForm/>
       </div>
     </div>
   );
-};
-let new_players_score = [];
-let modal = new Modal();
+}
+
+let model = new Model();
 let counter = 1;
+
 let render = () => {
-  ReactDOM.render(<PlayerScore title="Scoreboard" players={modal} />, document.getElementById('container'));
+  ReactDOM.render(<Application title="Scoreboard" model={model} />,
+   document.getElementById('container')
+  );
 };
-modal.subscribe(render);
+model.subscribe(render);
 render();
