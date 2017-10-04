@@ -29,51 +29,47 @@ class Model {
     this.callback();
   }
 
-  addPlayer(name) {
-    if (this.input != null && this.input.value != ' ') {
-      this.players.push({
-        name: this.input.value,
-        score: 0,
-        id: Utils.uuid()
-      });
-
-      this.notify();
-      input.value = '';
-    }
-  }
-
-  Aumentar(index) {
-    if (this.players[index].score > 0) {
-      this.players[index].score++;
-      this.notify();
-    }
-  }
-
-  Disminuir(index) {
-    if (this.players[index].score > 0) {
-      this.players[index].score--;
-      this.notify();
-    }
-  }
-
-  totalPoints(e, index, x) {
+  totalPoints() {
     return model.players.map((e) => e.score).reduce((e, x) => { return e + x });
     this.notify();
+    this.callback();
+
   }
 
-  nuevoPlayes() {
+  newPlayes() {
     return model.players.length;
   }
 
+  addPlayer(name) {
+    console.log(name.value);
+    this.players.push({
+      name: this.input.value,
+      score: 0,
+
+    })
+
+    this.callback();
+    this.notify();
+  }
+
+  aumentar(index) {
+    this.players[index].score++;
+    this.callback();
+    this.notify();
+  }
+
+  disminuir(index) {
+    this.players[index].score--;
+    this.callback();
+    this.notify();
+  }
 }
 
-
-
-const Header = (props) => {//React.createClass---palabra reservada
+const Header = (props) => {
   return (
     <div className="header">
       <div className="col-md-8">
-        <p>PLAYERS:{model.nuevoPlayes()}</p>
+        <p>PLAYERS:{model.newPlayes()}</p>
         <p>TOTAL POINTS:{model.totalPoints()}</p>
       </div>
 
@@ -84,44 +80,41 @@ const Header = (props) => {//React.createClass---palabra reservada
         <button>RESET</button>
       </div>
     </div>
-  );
+  )
 }
 
 
 
-const PlayerList = React.createClass({
-  render: function () {
-    return (//React.createClass---palabra reservada
-      <div >
-        {
-          model.players.map((item, index) => {//players--objeto del array
-            return (
-              <div className="player">
-                <div className="player-name " >
-                  <div >{item.name} </div>
-                </div>
-                <div className="player-score counter ">
+const PlayerList = ({ model }) => {
+  return (
+    <div>{
+      model.players.map((item, index) => {
+        return (
+          <div className="player">
+            <div className="player-name " >{item.name}</div>
+            <div className="player-score counter ">
+              <button className="counter-action decrement btn" onClick={() => model.disminuir(index)} >-</button>
+              <div className="counter-score" >{item.score} </div>
+              <button className="counter-action increment" onClick={() => { model.aumentar(index) }}>+</button>
+            </div>
+          </div>
+        )
+      }
+      )
+    }
+    </div>
+  )
+}
 
-                  <button className="counter-action decrement btn" onClick={() => model.Disminuir(index)} >-</button>
-                  <div >{item.score} </div>
-                  <button className="counter-action increment" onClick={() => { model.Aumentar(index) }}>+</button>
-                </div>
-              </div>
-            );
-          })
-        }
-      </div>
-    );
-  }
-})
+
 
 const PlayerForm = React.createClass({
   render: function () {
     return (
-      <div>
-        <form className="form" onSubmit={e => {
+      <div className="add-player-form">
+        <form onSubmit={e => {
           e.preventDefault();
-          model.addPlayer(model.inputAddPlayer);
+          model.addPlayer(name);
         }}
         >
           <input onChange={e => (model.input = e.target)} type="text" placeholder="NOMBRE" />
@@ -135,12 +128,10 @@ const PlayerForm = React.createClass({
 
 const Application = ({ title, model }) => {
   return (
-    <div>
-      <div className="scoreboard">
-        <Header/>
-        <PlayerList/>
-        <PlayerForm/>
-      </div>
+    <div className="scoreboard">
+      <Header model={model} />
+      <PlayerList model={model} />
+      <PlayerForm />
     </div>
   );
 }
@@ -150,7 +141,7 @@ let counter = 1;
 
 let render = () => {
   ReactDOM.render(<Application title="Scoreboard" model={model} />,
-   document.getElementById('container')
+    document.getElementById('container')
   );
 };
 model.subscribe(render);
