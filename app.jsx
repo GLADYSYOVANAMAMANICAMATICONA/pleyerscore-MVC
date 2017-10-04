@@ -31,27 +31,26 @@ class Modal {
   }
 
   addPlayer(name) {
-    console.log(this.inputAddPlayerinput.value);
-    if (this.inputAddPlayer != null && this.inputAddPlayer.value != '') {
-      this.players.push({
-        name: this.inputAddPlayer.value,
-        score: 0,
-        id: Utils.uuid()
-      });
+    if(this.inputAddPlayer!= null && this.inputAddPlayer.value !=''){
+    this.players.push({
+      name: this.inputAddPlayer.value,
+      score: 0,
+      id: Utils.uuid()
+    });
 
-      this.notify();
-      this.FinputAddPlayer.value = '';
-    }
+    this.notify();
+    inputAddPlayer.value = '';
   }
+}
 
-  aumentar(index) {
+  Aumentar(index) {
     if (this.players[index].score > 0) {
       this.players[index].score++;
       this.notify();
     }
   }
 
-  disminuir(index) {
+  Disminuir(index) {
     if (this.players[index].score > 0) {
       this.players[index].score--;
       this.notify();
@@ -65,21 +64,14 @@ class Modal {
 
 }
 
-const PlayerScore = ({ title, modal }) => {
+const PlayerScore = ({ title, model }) => {
   const Header = (//React.createClass---palabra reservada
     <div className="header">
       <div className="col-md-8">
-        <table>
-          <tr>
-        <td>PLAYERS:</td>
-        <td>{modal.players.length}</td>
-        </tr>
-        <tr>
-        <td>TOTAL POINTS:</td>
-        <td>{modal.players.map(x => x.score).reduce((x, y) => x + y)}</td>
-        </tr>
-        </table>
+        <p>PLAYERS:{modal.players.length}</p>
+        <p>TOTAL POINTS:{modal.players.map(x => x.score).reduce((x,y)=> x+y )} </p>
       </div>
+
       <div className="col-md-4 stopwatch">
         <p>STOPWATH</p>
         <h1>0</h1>
