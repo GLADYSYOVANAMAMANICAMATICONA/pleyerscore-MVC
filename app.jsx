@@ -1,20 +1,29 @@
+class Timer extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+    };
+  }
+
+  render() {
+    return <div className="timer">
+    </div>;
+  }
+}
+
 class Model {
   constructor() {
     this.players = [
       {
-        name: "Jim Hoskins",
-        score: 31,
+        name: "Gustavo Paz",
+        coment: "El siguiente proyecto es Interesante",
         id: 1,
       },
       {
-        name: "Andree Hoskins",
-        score: 35,
+        name: "Daniel Linares",
+        coment: "Participare en la siguiente HACKATON",
         id: 2,
-      },
-      {
-        name: "Alena Hoskins",
-        score: 42,
-        id: 3,
       },
     ];
 
@@ -29,37 +38,16 @@ class Model {
     this.callback();
   }
 
-  totalPoints() {
-    return model.players.map((e) => e.score).reduce((e, x) => { return e + x });
-    this.notify();
-    this.callback();
-
-  }
-
   newPlayes() {
     return model.players.length;
   }
 
-  addPlayer(name) {
+  addPlayer(name, coment) {
     console.log(name.value);
     this.players.push({
       name: this.input.value,
-      score: 0,
-
+      coment: this.input.value,
     })
-
-    this.callback();
-    this.notify();
-  }
-
-  aumentar(index) {
-    this.players[index].score++;
-    this.callback();
-    this.notify();
-  }
-
-  disminuir(index) {
-    this.players[index].score--;
     this.callback();
     this.notify();
   }
@@ -70,20 +58,10 @@ const Header = (props) => {
     <div className="header">
       <div className="col-md-8">
         <p>PLAYERS:{model.newPlayes()}</p>
-        <p>TOTAL POINTS:{model.totalPoints()}</p>
-      </div>
-
-      <div className="col-md-4 stopwatch">
-        <p>STOPWATH</p>
-        <h1>0</h1>
-        <button>ATART</button>
-        <button>RESET</button>
       </div>
     </div>
   )
 }
-
-
 
 const PlayerList = ({ model }) => {
   return (
@@ -92,11 +70,7 @@ const PlayerList = ({ model }) => {
         return (
           <div className="player">
             <div className="player-name " >{item.name}</div>
-            <div className="player-score counter ">
-              <button className="counter-action decrement btn" onClick={() => model.disminuir(index)} >-</button>
-              <div className="counter-score" >{item.score} </div>
-              <button className="counter-action increment" onClick={() => { model.aumentar(index) }}>+</button>
-            </div>
+            <div className="player-count" >{item.coment} </div>
           </div>
         )
       }
@@ -106,8 +80,6 @@ const PlayerList = ({ model }) => {
   )
 }
 
-
-
 const PlayerForm = React.createClass({
   render: function () {
     return (
@@ -115,23 +87,26 @@ const PlayerForm = React.createClass({
         <form onSubmit={e => {
           e.preventDefault();
           model.addPlayer(name);
+          model.addPlayer(coment);
+
+
         }}
         >
-          <input onChange={e => (model.input = e.target)} type="text" placeholder="NOMBRE" />
-          <input type="submit" value="Player" />
+          <input onChange={e => (model.input = e.target)} type="text" placeholder="NOMBRE" /><br />
+          <input onChange={e => (model.input = e.target)} type="text" placeholder="NUEVO COMENTARIO" /><br />
+          <input type="submit" value="Add" />
         </form>
       </div>
     )
   }
 })
 
-
 const Application = ({ title, model }) => {
   return (
     <div className="scoreboard">
+      <PlayerForm />
       <Header model={model} />
       <PlayerList model={model} />
-      <PlayerForm />
     </div>
   );
 }
